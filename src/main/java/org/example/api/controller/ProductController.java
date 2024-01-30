@@ -1,7 +1,9 @@
 package org.example.api.controller;
 
-import org.example.persistence.entity.Product;
+import lombok.RequiredArgsConstructor;
+import org.example.api.dto.response.ProductResponse;
 import org.example.service.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,23 +11,29 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("product")
+@RequiredArgsConstructor
 public class ProductController {
 
+    @Autowired
     private ProductService productService;
 
-    public ProductController(ProductService productService) {
-        this.productService = productService;
+    @GetMapping("")
+    public List<ProductResponse> getAll() {
+
+        return productService.getAllProducts()
+                .stream()
+                .map(product -> ProductResponse.of(product.getProductId(), product.getName(),
+                        product.getDescription(), product.getPrice(), product.getImage()))
+                .toList();
     }
 
-    @GetMapping("/")
-    public List<Product> getAllProducts() {
-        return productService.findAll();
-    }
+    @GetMapping("{productId}")
+    public ProductResponse get(@PathVariable long productId) {
+       final var product = productService.findById(productId);
 
-    @GetMapping("/{productId}")
-    public void getProductById(@PathVariable long productId) {
-       // return productService.findById(id);
+       return ProductResponse.of(product.getProductId(), product.getName(), product.getDescription(), product.getPrice(), product.getImage());
     }
 }

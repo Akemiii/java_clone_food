@@ -3,50 +3,28 @@ package org.example.service;
 import lombok.RequiredArgsConstructor;
 import org.example.domain.ProductDomain;
 import org.example.exception.NotFoundException;
-import org.example.persistence.entity.Product;
+import org.example.util.ObjectMapperUtil;
 import org.springframework.stereotype.Service;
 import org.example.persistence.repository.ProductRepository;
-
 import java.util.List;
-import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService {
 
     private final ProductRepository repository;
+    private final ObjectMapperUtil objectMapperUtil;
 
     public List<ProductDomain> getAllProducts() {
-       return repository.findAll()
-               .stream()
-               .map(mapProdutToDomain())
-               .toList();
+        return objectMapperUtil.mapAll(
+                repository.findAll(), ProductDomain.class
+        );
     }
 
     public ProductDomain findById(long productId) {
         return repository.findById(productId)
-                .map(mapProdutToDomain())
+                .map(objectMapperUtil.mapFn(ProductDomain.class))
                 .orElseThrow(NotFoundException::new);
     }
 
-    private Function<Product, ProductDomain> mapProdutToDomain() {
-        return product -> ProductDomain.builder()
-                .productId(product.getProductId())
-                .name(product.getName())
-                .description(product.getDescription())
-                .price(product.getPrice())
-                .image(product.getImage())
-                .build();
-
-    }
-
-    private Function<ProductDomain, Product> mapDomainToProduct() {
-        return product -> Product.builder()
-                .productId(product.getProductId())
-                .name(product.getName())
-                .description(product.getDescription())
-                .price(product.getPrice())
-                .image(product.getImage())
-                .build();
-    }
 }

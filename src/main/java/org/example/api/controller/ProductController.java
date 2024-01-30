@@ -3,6 +3,7 @@ package org.example.api.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.api.dto.response.ProductResponse;
 import org.example.service.ProductService;
+import org.example.util.ObjectMapperUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,23 +18,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductController {
 
-    @Autowired
     private ProductService productService;
+    private ObjectMapperUtil objectMapperUtil;
 
     @GetMapping("")
     public List<ProductResponse> getAll() {
-
-        return productService.getAllProducts()
-                .stream()
-                .map(product -> ProductResponse.of(product.getProductId(), product.getName(),
-                        product.getDescription(), product.getPrice(), product.getImage()))
-                .toList();
+        return objectMapperUtil.mapAll(productService.getAllProducts(), ProductResponse.class);
     }
 
     @GetMapping("{productId}")
     public ProductResponse get(@PathVariable long productId) {
        final var product = productService.findById(productId);
 
-       return ProductResponse.of(product.getProductId(), product.getName(), product.getDescription(), product.getPrice(), product.getImage());
+       return objectMapperUtil.map(product, ProductResponse.class);
     }
+
+    //TODO:: Adicionar Create() e Update()
 }

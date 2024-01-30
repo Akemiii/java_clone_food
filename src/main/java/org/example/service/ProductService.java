@@ -2,6 +2,7 @@ package org.example.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.domain.ProductDomain;
+import org.example.exception.NotFoundException;
 import org.example.persistence.entity.Product;
 import org.springframework.stereotype.Service;
 import org.example.persistence.repository.ProductRepository;

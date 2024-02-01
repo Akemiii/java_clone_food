@@ -13,10 +13,12 @@ public class ApiExceptionResponse {
     private List<ErrorDetail> errors;
 
 
-
     @Getter
     @Setter
     static class ErrorDetail {
+
+        //TODO:: faz sentido utilizar esse campo? Remover caso não houver integração com outros microserviços,
+        //se houver integração com outros serviços, transformar em lib para ser utilizada por outros microserviços
         private String origin;
         private String errorCode;
         private String message;

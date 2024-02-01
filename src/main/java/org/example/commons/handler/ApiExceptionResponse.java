@@ -9,8 +9,6 @@ import java.util.List;
 @Setter
 public class ApiExceptionResponse {
     private int status;
-    private String error;
-    private String message;
     private String path;
     private List<ErrorDetail> errors;
 
